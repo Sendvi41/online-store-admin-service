@@ -1,0 +1,267 @@
+openapi: 3.0.2
+info:
+  title: gateway-api
+  version: "1.0.0"
+  description: 'gateway-api'
+tags:
+  - name: admin-service
+    description: Access to functionality of admin
+  - name: customer-service
+    description: Access to functionality of customer
+paths:
+  /goods:
+    get:
+      tags:
+        - admin-service
+      summary: Get all goods
+      description: Get all goods
+      responses:
+        '200':
+          description: Get list of goods
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Goods'
+  /good:
+    post:
+      tags:
+        - admin-service
+      summary: Add a new goods
+      description: Add a new goods
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Goods'
+        required: true
+      responses:
+        '200':
+          description: Goods is added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goods'
+        '400':
+          description: Validation is failed
+  /good/{goodId}:
+    get:
+      tags:
+        - admin-service
+      summary: Get one goods by id
+      description: Get one goods by id
+      parameters:
+        - name: goodsId
+          in: path
+          description: ID of goods
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Get single goods
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goods'
+        '400':
+          description: Invalid ID
+        '404':
+          description: Goods not found
+    put:
+      tags:
+        - admin-service
+      summary: Update goods by id
+      description: Update goods by id
+      parameters:
+        - name: goodsId
+          in: path
+          description: ID of goods
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Goods'
+        required: true
+      responses:
+        '200':
+          description: Goods is updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goods'
+        '400':
+          description: Validation is failed
+        '404':
+          description: Goods not found
+    delete:
+      tags:
+        - admin-service
+      summary: Delete one goods by id
+      description: Delete one goods by id
+      parameters:
+        - name: goodsId
+          in: path
+          description: ID of goods
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Goods is deleted
+        '400':
+          description: Invalid ID
+        '404':
+          description: Goods not found
+  /products/search/{criteria}:
+    get:
+      tags:
+        - customer-service
+      summary: Find all products by criteria
+      description: Find all products by criteria
+      parameters:
+        - name: criteria
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Criteria'
+      responses:
+        '200':
+          description: Get list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Goods'
+  /basket/{userId}:
+    get:
+      tags:
+        - customer-service
+      summary: Get all products of basket by userId
+      description: Get all products of basket by userId
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Get list of products of basket
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Goods'
+        '400':
+          description: Invalid ID
+        '404':
+          description: The user not found
+  /basket/{userId}/{goodsId}:
+    post:
+      tags:
+        - customer-service
+      summary: Add product to basket
+      description: Add product to basket
+      parameters:
+        - name: goodsId
+          in: path
+          description: ID of goods
+          required: true
+          schema:
+            type: integer
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The product is added to basket
+        '400':
+          description: Invalid ID
+        '404':
+          description: The product not found
+    delete:
+      tags:
+        - customer-service
+      summary: Delete product from basket
+      description: Delete product from basket
+      parameters:
+        - name: goodsId
+          in: path
+          description: ID of goods
+          required: true
+          schema:
+           type: integer
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Goods is deleted
+        '400':
+          description: Invalid ID
+        '404':
+          description: Goods not found
+  /order/{userId}:
+    post:
+      tags:
+        - customer-service
+      summary: Create order for user
+      description: Create order for user
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Order is created
+        '400':
+          description: Invalid ID
+        '404':
+          description: User not found
+components:
+  schemas:
+    Goods:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        date:
+          type: string
+    Criteria:
+      properties:
+        category:
+          type: string
+        mindate:
+          type: string
+        maxdate:
+          type: string
+
+
+
+
+
+
+
+
+
+
