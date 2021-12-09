@@ -1,17 +1,20 @@
 package com.epam.druzhinin.entity;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.experimental.Accessors;
+
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 
 @Data
 @Entity
+@Accessors(chain = true)
 @Table(name = "goods")
 public class GoodsEntity {
+
     @Id
-    @Column
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

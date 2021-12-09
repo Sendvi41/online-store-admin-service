@@ -5,5 +5,5 @@ create table goods
             primary key,
     name        varchar(50)    not null,
     category    varchar(50)    not null,
-    date        timestamp      not null,
+    date        timestamp      not null
 );
