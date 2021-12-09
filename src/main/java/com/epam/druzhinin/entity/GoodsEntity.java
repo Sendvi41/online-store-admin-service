@@ -16,13 +16,19 @@ public class GoodsEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "category")
     private String category;
+
+    @Column(name="amount")
+    private Integer amount;
+
+    @Column(name="price")
+    private Integer price;
 
     @Column(name = "date", nullable = false)
     private ZonedDateTime date;

@@ -5,5 +5,7 @@ create table goods
             primary key,
     name        varchar(50)    not null,
     category    varchar(50)    not null,
+    amount      numeric(18, 2) not null,
+    price      numeric(18, 2) not null,
     date        timestamp      not null
 );
