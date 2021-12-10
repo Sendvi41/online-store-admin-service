@@ -1,7 +1,7 @@
 package com.epam.druzhinin.exception;
 
 import com.epam.druzhinin.dto.MessageDto;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,7 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-@Log4j2
+@Slf4j
 public class CommonExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {BaseException.class})
