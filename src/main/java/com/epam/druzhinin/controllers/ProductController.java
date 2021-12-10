@@ -1,7 +1,7 @@
 package com.epam.druzhinin.controllers;
 
 import com.epam.druzhinin.dto.ProductDto;
-import com.epam.druzhinin.dto.MessageDTO;
+import com.epam.druzhinin.dto.MessageDto;
 import com.epam.druzhinin.entity.ProductEntity;
 import com.epam.druzhinin.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +42,8 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageDTO> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<MessageDto> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-        return ResponseEntity.ok(MessageDTO.of("Product is deleted by id" + id));
+        return ResponseEntity.ok(MessageDto.of("Product is deleted by id" + id));
     }
 }

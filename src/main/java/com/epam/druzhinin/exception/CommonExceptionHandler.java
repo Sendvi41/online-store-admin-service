@@ -1,6 +1,6 @@
 package com.epam.druzhinin.exception;
 
-import com.epam.druzhinin.dto.MessageDTO;
+import com.epam.druzhinin.dto.MessageDto;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,7 +16,7 @@ public class CommonExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleException(BaseException ex, WebRequest request) {
         String message = ex.getMessage();
         log.warn(message);
-        return ResponseEntity.status(ex.getHttpStatus()).body(MessageDTO.of(message));
+        return ResponseEntity.status(ex.getHttpStatus()).body(MessageDto.of(message));
     }
 
 }
