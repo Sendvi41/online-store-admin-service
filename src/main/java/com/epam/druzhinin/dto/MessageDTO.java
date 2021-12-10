@@ -1,10 +1,12 @@
 package com.epam.druzhinin.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
 
 @Data
-@Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class MessageDTO {
     private String message;
 }

@@ -29,13 +29,13 @@ public class GoodsService {
         return goodsRepository.save(goods);
     }
 
-    public GoodsEntity findGoodsById(Integer id) {
+    public GoodsEntity findGoodsById(Long id) {
         return goodsRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Goods is not found")
         );
     }
 
-    public GoodsEntity updateGoods(GoodsDTO goodsDTO, Integer id) {
+    public GoodsEntity updateGoods(GoodsDTO goodsDTO, Long id) {
         goodsRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Goods is not found")
         );
@@ -46,7 +46,7 @@ public class GoodsService {
         return updatedGoods;
     }
 
-    public void deleteGoods(Integer id){
+    public void deleteGoods(Long id) {
         goodsRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Goods is not found")
         );

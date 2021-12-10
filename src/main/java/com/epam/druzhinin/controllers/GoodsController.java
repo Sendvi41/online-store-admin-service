@@ -29,21 +29,21 @@ public class GoodsController {
     }
 
     @GetMapping("/{id}")
-    public GoodsEntity getGoodsById(@PathVariable Integer id) {
+    public GoodsEntity getGoodsById(@PathVariable Long id) {
         return goodsService.findGoodsById(id);
     }
 
     @PutMapping("/{id}")
     public GoodsEntity updateGoods(
-            @PathVariable Integer goodsId,
+            @PathVariable Long id,
             @RequestBody GoodsDTO goodsDTO
     ) {
-        return goodsService.updateGoods(goodsDTO, goodsId);
+        return goodsService.updateGoods(goodsDTO, id);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageDTO> deleteGoods(@PathVariable Integer id) {
+    public ResponseEntity<MessageDTO> deleteGoods(@PathVariable Long id) {
         goodsService.deleteGoods(id);
-        return ResponseEntity.ok(new MessageDTO().setMessage("Goods is deleted by id" + id));
+        return ResponseEntity.ok(MessageDTO.of("Goods is deleted by id" + id));
     }
 }
