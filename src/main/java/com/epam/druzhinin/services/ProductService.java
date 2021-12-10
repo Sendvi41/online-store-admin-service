@@ -15,11 +15,16 @@ import java.util.List;
 @Log4j2
 public class ProductService {
 
-    @Autowired
-    private ModelMapper modelMapper;
+
+    private final ModelMapper modelMapper;
+
+    private final ProductRepository productRepository;
 
     @Autowired
-    private ProductRepository productRepository;
+    public ProductService(ModelMapper modelMapper, ProductRepository productRepository) {
+        this.modelMapper = modelMapper;
+        this.productRepository = productRepository;
+    }
 
     public List<ProductEntity> getProducts() {
         return productRepository.findAll();
