@@ -1,9 +1,9 @@
 package com.epam.druzhinin.repositories;
 
-import com.epam.druzhinin.entity.GoodsEntity;
+import com.epam.druzhinin.entity.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GoodsRepository extends JpaRepository<GoodsEntity, Long> {
+public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 }

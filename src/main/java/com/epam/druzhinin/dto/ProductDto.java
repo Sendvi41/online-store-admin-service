@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 
 @Data
 @Accessors(chain = true)
-public class GoodsDTO {
+public class ProductDto {
     private String name;
     private String category;
     private Integer amount;

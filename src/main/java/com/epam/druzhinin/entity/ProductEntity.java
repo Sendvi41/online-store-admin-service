@@ -10,8 +10,8 @@ import java.time.ZonedDateTime;
 @Data
 @Entity
 @Accessors(chain = true)
-@Table(name = "goods")
-public class GoodsEntity {
+@Table(name = "products")
+public class ProductEntity {
 
     @Id
     @Column(name = "id")

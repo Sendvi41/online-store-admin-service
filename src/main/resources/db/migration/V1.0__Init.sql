@@ -1,4 +1,4 @@
-create table goods
+create table products
 (
     id          bigserial
         constraint goods_pk
