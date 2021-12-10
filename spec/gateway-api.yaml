@@ -9,113 +9,117 @@ tags:
   - name: customer-service
     description: Access to functionality of customer
 paths:
-  /goods:
+  /products:
     get:
       tags:
         - admin-service
-      summary: Get all goods
-      description: Get all goods
+      summary: Get all products
+      description: Get all products
       responses:
         '200':
-          description: Get list of goods
+          description: Get list of products
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Goods'
+                  $ref: '#/components/schemas/ProductEntity'
     post:
       tags:
         - admin-service
-      summary: Add a new goods
-      description: Add a new goods
+      summary: Add a new product
+      description: Add a new product
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Goods'
+              $ref: '#/components/schemas/ProductDto'
         required: true
       responses:
         '200':
-          description: Goods is added
+          description: Product is added
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Goods'
+                $ref: '#/components/schemas/ProductEntity'
         '400':
           description: Validation is failed
-  /goods/{goodsId}:
+  /products/{id}:
     get:
       tags:
         - admin-service
-      summary: Get one goods by id
-      description: Get one goods by id
+      summary: Get product by id
+      description: Get product by id
       parameters:
-        - name: goodsId
+        - name: id
           in: path
-          description: ID of goods
+          description: id of product
           required: true
           schema:
-            type: integer
+            type: long
       responses:
         '200':
-          description: Get single goods
+          description: Get product
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Goods'
+                $ref: '#/components/schemas/ProductEntity'
         '400':
           description: Invalid ID
         '404':
-          description: Goods not found
+          description: Product is not found
     put:
       tags:
         - admin-service
-      summary: Update goods by id
-      description: Update goods by id
+      summary: Update product by id
+      description: Update product by id
       parameters:
-        - name: goodsId
+        - name: id
           in: path
-          description: ID of goods
+          description: ID of product
           required: true
           schema:
-            type: integer
+            type: long
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Goods'
+              $ref: '#/components/schemas/ProductDto'
         required: true
       responses:
         '200':
-          description: Goods is updated
+          description: Product is updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Goods'
+                $ref: '#/components/schemas/ProductEntity'
         '400':
           description: Validation is failed
         '404':
-          description: Goods not found
+          description: Product is not found
     delete:
       tags:
         - admin-service
-      summary: Delete one goods by id
-      description: Delete one goods by id
+      summary: Delete product by id
+      description: Delete product by id
       parameters:
-        - name: goodsId
+        - name: id
           in: path
-          description: ID of goods
+          description: ID of product
           required: true
           schema:
-            type: integer
+            type: long
       responses:
         '200':
-          description: Goods is deleted
+          description: Product is deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
         '400':
           description: Invalid ID
         '404':
-          description: Goods not found
+          description: Product is not found
   /products/search/{criteria}:
     get:
       tags:
@@ -136,7 +140,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Goods'
+                  $ref: '#/components/schemas/ProductEntity'
   /basket/{userId}:
     get:
       tags:
@@ -158,7 +162,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Goods'
+                  $ref: '#/components/schemas/ProductEntity'
         '400':
           description: Invalid ID
         '404':
@@ -236,15 +240,35 @@ paths:
           description: User not found
 components:
   schemas:
-    Goods:
+    ProductEntity:
       properties:
         id:
-          type: integer
+          type: long
         name:
           type: string
         category:
           type: string
+        amount:
+          type: integer
+        price:
+          type: integer
         date:
+          type: string
+    ProductDto:
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        amount:
+          type: integer
+        price:
+          type: integer
+        date:
+          type: string
+    MessageDto:
+      properties:
+        name:
           type: string
     Criteria:
       properties:
