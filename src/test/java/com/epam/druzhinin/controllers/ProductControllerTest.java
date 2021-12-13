@@ -17,7 +17,6 @@ import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import javax.transaction.Transactional;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -50,14 +49,12 @@ public class ProductControllerTest {
     private ModelMapper modelMapper;
 
     @BeforeTestMethod
-    @Transactional
     void setUp() {
         List<ProductEntity> listProductEntity = getListProductEntity();
         listProductEntity.forEach(entity -> productRepository.save(entity));
     }
 
     @AfterTestMethod
-    @Transactional
     void clearDb() {
         productRepository.deleteAll();
     }
