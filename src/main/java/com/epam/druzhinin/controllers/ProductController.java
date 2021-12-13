@@ -1,7 +1,7 @@
 package com.epam.druzhinin.controllers;
 
-import com.epam.druzhinin.dto.ProductDto;
 import com.epam.druzhinin.dto.MessageDto;
+import com.epam.druzhinin.dto.ProductDto;
 import com.epam.druzhinin.entity.ProductEntity;
 import com.epam.druzhinin.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ProductEntity createProduct(ProductDto productDto) {
+    public ProductEntity createProduct(@RequestBody ProductDto productDto) {
         return productService.createProduct(productDto);
     }
 

@@ -58,7 +58,7 @@ public class ProductService {
     public void deleteProduct(Long id) {
         log.info("Starting to delete the product [id={}]", id);
         productRepository.findById(id).orElseThrow(
-                () -> new NotFoundException("Product is not found" + id)
+                () -> new NotFoundException("Product is not found id=" + id)
         );
         productRepository.deleteById(id);
         log.info("Product is deleted [id={}]", id);

@@ -8,35 +8,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.event.annotation.AfterTestMethod;
+import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@EnableAutoConfiguration(exclude = {
-        DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class,
-})
+@Testcontainers
 public class ProductControllerTest {
 
     private static final String PRODUCT_END_POINT = "/products";
@@ -55,11 +50,25 @@ public class ProductControllerTest {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Container
+    public GenericContainer postgres = new GenericContainer(DockerImageName.parse("postgres:13.4"))
+            .withExposedPorts(5432)
+            .withEnv("POSTGRES_PASSWORD", "password")
+            .withEnv("POSTGRES_USER", "postgres");
+
+    @BeforeTestMethod
+    void setUp() {
+        List<ProductEntity> listProductEntity = getListProductEntity();
+        listProductEntity.forEach(entity -> productRepository.save(entity));
+    }
+
+    @AfterTestMethod
+    void clearDb() {
+        productRepository.deleteAll();
+    }
+
     @Test
     void getProducts_shouldReturn200OkAndListProductEntity() throws Exception {
-        //given
-        List<ProductEntity> listEntities = getListProductEntity();
-        when(productRepository.findAll()).thenReturn(listEntities);
         //when
         String result = mockMvc.perform(get(PRODUCT_END_POINT))
                 //then
@@ -74,8 +83,6 @@ public class ProductControllerTest {
     void createProduct_shouldReturn200OkAndProductEntity() throws Exception {
         //given
         ProductDto productDto = getValidProductDto();
-        ProductEntity entity = modelMapper.map(productDto, ProductEntity.class);
-        when(productRepository.save(any())).thenReturn(entity.setId(1L));
         //when
         String result = mockMvc.perform(post(PRODUCT_END_POINT)
                         .content(objectMapper.writeValueAsString(productDto))
@@ -97,10 +104,9 @@ public class ProductControllerTest {
     @Test
     void getProductById_shouldReturn200OkAndProductEntity() throws Exception {
         //given
-        ProductEntity expectedEntity = prepareProductEntity(it -> it.setId(1L));
-        when(productRepository.findById(any())).thenReturn(Optional.of(expectedEntity));
+        ProductEntity expectedEntity = productRepository.save(prepareProductEntity(it -> it.setName("stool")));
         //when
-        String result = mockMvc.perform(get(PRODUCT_END_POINT + "/{id}", 1L))
+        String result = mockMvc.perform(get(PRODUCT_END_POINT + "/{id}", expectedEntity.getId()))
                 //then
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -119,11 +125,8 @@ public class ProductControllerTest {
     @Test
     void updateProduct_shouldReturn200OkAndProductEntity() throws Exception {
         //given
-        Long expectedId = 1L;
+        Long expectedId = productRepository.save(prepareProductEntity(it -> it.setName("stool"))).getId();
         ProductDto productDto = getValidProductDto();
-        ProductEntity entity = modelMapper.map(productDto, ProductEntity.class);
-        when(productRepository.findById(any())).thenReturn(Optional.of(entity.setId(expectedId)));
-        when(productRepository.save(any())).thenReturn(entity.setId(expectedId));
         //when
         String result = mockMvc.perform(put(PRODUCT_END_POINT + "/{id}", expectedId)
                         .content(objectMapper.writeValueAsString(productDto))
@@ -146,9 +149,7 @@ public class ProductControllerTest {
     @Test
     void deleteProduct_shouldReturn200OkAndMessageDto() throws Exception {
         //given
-        Long expectedId = 1L;
-        ProductEntity deletedEntity = prepareProductEntity(it -> it.setId(1L));
-        when(productRepository.findById(expectedId)).thenReturn(Optional.of(deletedEntity.setId(expectedId)));
+        Long expectedId = productRepository.save(prepareProductEntity(it -> it.setName("stool"))).getId();
         //when
         String result = mockMvc.perform(delete(PRODUCT_END_POINT + "/{id}", expectedId))
                 //then
@@ -159,10 +160,8 @@ public class ProductControllerTest {
 
         assertThat(result).isNotBlank();
         assertThat(messageDto.getMessage()).isNotBlank();
-        verify(productRepository, times(1)).findById(expectedId);
-        verify(productRepository, times(1)).deleteById(expectedId);
+        assertThat(productRepository.findById(expectedId).isPresent()).isFalse();
     }
-
 
     private static ProductDto getValidProductDto() {
         return new ProductDto().setAmount(1000)
@@ -175,17 +174,17 @@ public class ProductControllerTest {
 
     private static List<ProductEntity> getListProductEntity() {
         return List.of(
-                prepareProductEntity(it -> it.setPrice(10000).setId(2L)),
-                prepareProductEntity(it -> it.setPrice(1000).setId(3L)),
-                prepareProductEntity(it -> it.setPrice(1500).setId(4L)),
-                prepareProductEntity(it -> it.setAmount(23).setId(5L)),
-                prepareProductEntity(it -> it.setName("chair").setId(6L)),
-                prepareProductEntity(it -> it.setName("sofa").setId(7L))
+                prepareProductEntity(it -> it.setPrice(10000)),
+                prepareProductEntity(it -> it.setPrice(1000)),
+                prepareProductEntity(it -> it.setPrice(1500)),
+                prepareProductEntity(it -> it.setAmount(23)),
+                prepareProductEntity(it -> it.setName("chair")),
+                prepareProductEntity(it -> it.setName("sofa"))
         );
     }
 
     private static ProductEntity prepareProductEntity(Consumer<ProductEntity> it) {
-        ProductEntity productEntity = new ProductEntity().setId(1L)
+        ProductEntity productEntity = new ProductEntity()
                 .setAmount(10)
                 .setCategory("furniture")
                 .setDate(ZonedDateTime.now(ZoneId.of(ZONE_ID)))
