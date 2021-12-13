@@ -1,5 +1,6 @@
 package com.epam.druzhinin.controllers;
 
+import com.epam.druzhinin.config.TestContainerConfig;
 import com.epam.druzhinin.dto.MessageDto;
 import com.epam.druzhinin.dto.ProductDto;
 import com.epam.druzhinin.entity.ProductEntity;
@@ -14,11 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.event.annotation.AfterTestMethod;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
+import javax.transaction.Transactional;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -29,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = TestContainerConfig.class)
 @AutoConfigureMockMvc
 @Testcontainers
 public class ProductControllerTest {
@@ -50,19 +49,15 @@ public class ProductControllerTest {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Container
-    public GenericContainer postgres = new GenericContainer(DockerImageName.parse("postgres:13.4"))
-            .withExposedPorts(5432)
-            .withEnv("POSTGRES_PASSWORD", "password")
-            .withEnv("POSTGRES_USER", "postgres");
-
     @BeforeTestMethod
+    @Transactional
     void setUp() {
         List<ProductEntity> listProductEntity = getListProductEntity();
         listProductEntity.forEach(entity -> productRepository.save(entity));
     }
 
     @AfterTestMethod
+    @Transactional
     void clearDb() {
         productRepository.deleteAll();
     }
