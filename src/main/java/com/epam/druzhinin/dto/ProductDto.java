@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Data
@@ -17,7 +18,7 @@ public class ProductDto {
     @NotNull
     private Integer amount;
     @NotNull
-    private Integer price;
+    private BigDecimal price;
     @NotNull
     private ZonedDateTime date;
 }
