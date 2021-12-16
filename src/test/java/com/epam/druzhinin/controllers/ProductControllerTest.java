@@ -17,6 +17,7 @@ import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -157,7 +158,7 @@ public class ProductControllerTest {
 
     private static ProductDto getValidProductDto() {
         return new ProductDto().setAmount(1000)
-                .setPrice(2000)
+                .setPrice(BigDecimal.valueOf(2000))
                 .setDate(ZonedDateTime.now(ZoneId.of(ZONE_ID)))
                 .setCategory("furniture")
                 .setName("chair")
@@ -166,9 +167,9 @@ public class ProductControllerTest {
 
     private static List<ProductEntity> getListProductEntity() {
         return List.of(
-                prepareProductEntity(it -> it.setPrice(10000)),
-                prepareProductEntity(it -> it.setPrice(1000)),
-                prepareProductEntity(it -> it.setPrice(1500)),
+                prepareProductEntity(it -> it.setPrice(BigDecimal.valueOf(10000))),
+                prepareProductEntity(it -> it.setPrice(BigDecimal.valueOf(1000))),
+                prepareProductEntity(it -> it.setPrice(BigDecimal.valueOf(1500))),
                 prepareProductEntity(it -> it.setAmount(23)),
                 prepareProductEntity(it -> it.setName("chair")),
                 prepareProductEntity(it -> it.setName("sofa"))
@@ -180,7 +181,7 @@ public class ProductControllerTest {
                 .setAmount(10)
                 .setCategory("furniture")
                 .setDate(ZonedDateTime.now(ZoneId.of(ZONE_ID)))
-                .setPrice(4000)
+                .setPrice(BigDecimal.valueOf(4000))
                 .setName("table");
         it.accept(productEntity);
         return productEntity;
