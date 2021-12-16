@@ -7,6 +7,8 @@ import com.epam.druzhinin.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +27,8 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductEntity> getProducts() {
-        return productRepository.findAll();
+    public Page<ProductEntity> getProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     public ProductEntity createProduct(ProductDto productDto) {
