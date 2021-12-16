@@ -1,17 +1,17 @@
 package com.epam.druzhinin.services;
 
+import com.epam.druzhinin.config.RabbitMQConfig;
 import com.epam.druzhinin.dto.ProductDto;
 import com.epam.druzhinin.entity.ProductEntity;
 import com.epam.druzhinin.exception.NotFoundException;
 import com.epam.druzhinin.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @Slf4j
@@ -21,10 +21,16 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    private final RabbitTemplate rabbitTemplate;
+
+    private final RabbitMQConfig rabbitMQConfig;
+
     @Autowired
-    public ProductService(ModelMapper modelMapper, ProductRepository productRepository) {
+    public ProductService(ModelMapper modelMapper, ProductRepository productRepository, RabbitTemplate rabbitTemplate, RabbitMQConfig rabbitMQConfig) {
         this.modelMapper = modelMapper;
         this.productRepository = productRepository;
+        this.rabbitTemplate = rabbitTemplate;
+        this.rabbitMQConfig = rabbitMQConfig;
     }
 
     public Page<ProductEntity> getProducts(Pageable pageable) {
@@ -36,6 +42,11 @@ public class ProductService {
         ProductEntity product = modelMapper.map(productDto, ProductEntity.class);
         ProductEntity savedProduct = productRepository.save(product);
         log.info("Product is saved [id={}]", savedProduct.getId());
+        rabbitTemplate.convertAndSend(
+                rabbitMQConfig.getExchange(),
+                rabbitMQConfig.getRoutingKey(),
+                savedProduct);
+        log.info("Product was send to exchange[exchange={}]", rabbitMQConfig.getExchange());
         return savedProduct;
     }
 
