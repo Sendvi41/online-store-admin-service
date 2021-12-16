@@ -6,6 +6,6 @@ create table products
     name        varchar(50)    not null,
     category    varchar(50)    not null,
     amount      INTEGER not null,
-    price      INTEGER not null,
+    price      NUMERIC (18,2) not null,
     date        timestamp      not null
 );
