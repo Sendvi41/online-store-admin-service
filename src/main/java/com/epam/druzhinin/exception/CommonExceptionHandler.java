@@ -25,8 +25,8 @@ public class CommonExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<Object> handleException(Exception ex) {
         UUID uuid = UUID.randomUUID();
-        log.error(ex.getMessage() + "[UUID={}]", uuid);
-        String errorMessage = "Internal server error, exception UUID=" + uuid;
+        log.error("Uncaught error occurred [incidentId={}]", uuid, ex);
+        String errorMessage = "Internal server error, incident id=" + uuid;
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(MessageDto.of(errorMessage));
     }
 }
