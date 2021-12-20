@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.epam.druzhinin.dto.MessageDto;
 import com.epam.druzhinin.exception.InternalServerException;
+import com.epam.druzhinin.exception.NotFoundException;
+import com.epam.druzhinin.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +26,12 @@ public class ImageService {
 
     private final AmazonS3 amazonS3Client;
 
+    private final ProductRepository productRepository;
+
     @Autowired
-    public ImageService(AmazonS3 amazonS3Client) {
+    public ImageService(AmazonS3 amazonS3Client, ProductRepository productRepository) {
         this.amazonS3Client = amazonS3Client;
+        this.productRepository = productRepository;
     }
 
     @PostConstruct
@@ -36,6 +41,9 @@ public class ImageService {
 
     public MessageDto uploadProductImage(Long productId, MultipartFile image) {
         log.info("Starting to save the product image [productId={}]", productId);
+        productRepository.findById(productId).orElseThrow(
+                () -> new NotFoundException("Product is not found id=" + productId)
+        );
         try {
             File file = convertMultiPartToFile(image);
             uploadFileTos3bucket(productId, file);
@@ -45,7 +53,7 @@ public class ImageService {
             throw new InternalServerException("The product image couldn't be upload productId=" + productId);
         }
         log.info("Product image was uploaded successfully [productId={}]", productId);
-        return MessageDto.of("Product image was uploaded successfully");
+        return MessageDto.of("Product image was uploaded successfully productId=" + productId);
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
