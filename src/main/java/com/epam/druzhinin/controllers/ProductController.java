@@ -61,8 +61,8 @@ public class ProductController {
     }
 
     @PostMapping("/{productId}/upload-image")
-    public ResponseEntity<MessageDto> uploadProductImage(@PathVariable Long productId, @RequestParam("image") MultipartFile image) {
-        return  ResponseEntity.ok(imageService.uploadProductImage(productId, image));
+    public MessageDto uploadProductImage(@PathVariable Long productId, @RequestParam("image") MultipartFile image) {
+        return imageService.uploadProductImage(productId, image);
     }
 
 }
