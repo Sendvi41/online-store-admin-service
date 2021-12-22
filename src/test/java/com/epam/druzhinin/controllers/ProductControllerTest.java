@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -109,7 +110,7 @@ public class ProductControllerTest {
 
         assertThat(result).isNotBlank();
         assertThat(expectedEntity.getId()).isEqualTo(actualEntity.getId());
-        assertThat(expectedEntity.getPrice()).isEqualTo(actualEntity.getPrice());
+        assertEquals(0, expectedEntity.getPrice().compareTo(actualEntity.getPrice()));
         assertThat(expectedEntity.getAmount()).isEqualTo(actualEntity.getAmount());
         assertThat(expectedEntity.getCategory()).isEqualTo(actualEntity.getCategory());
         assertThat(expectedEntity.getName()).isEqualTo(actualEntity.getName());

@@ -1,8 +1,11 @@
 package com.epam.druzhinin.config;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -30,4 +33,13 @@ public class TestContainerConfig {
 
         return new HikariDataSource(hikariConfig);
     }
+
+    @MockBean
+    private RabbitTemplate rabbitTemplate;
+
+    @MockBean
+    private RabbitMQConfig rabbitMQConfig;
+
+    @MockBean
+    private AmazonS3 amazonS3Client;
 }
