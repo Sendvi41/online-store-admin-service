@@ -15,6 +15,19 @@ paths:
         - admin-service
       summary: Get all products
       description: Get all products
+      parameters:
+        - name: page
+          in: path
+          description: number of page
+          required: false
+          schema:
+            type: integer
+        - name: size
+          in: path
+          description: size of page
+          required: false
+          schema:
+           type: integer
       responses:
         '200':
           description: Get list of products
@@ -120,18 +133,79 @@ paths:
           description: Invalid ID
         '404':
           description: Product is not found
-  /products/search/{criteria}:
-    get:
+  /{productId}/upload-image:
+    post:
+      tags:
+        - admin-service
+      summary: Upload image for product
+      description: Upload image for product
+      parameters:
+          - name: productId
+            in: path
+            description: id of product
+            required: true
+            schema:
+              type: long
+      requestBody:
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+          required: true
+      responses:
+        '200':
+          description: Image of product is uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
+        '400':
+          description: Invalid ID
+        '404':
+          description: Product is not found
+  /users:
+    post:
+      tags:
+        - customer-service
+      summary: Create new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequestDto'
+      responses:
+        '200':
+          description: User is created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEntity'
+        '400':
+          description: Invalid request
+  /products/search:
+    post:
       tags:
         - customer-service
       summary: Find all products by criteria
       description: Find all products by criteria
       parameters:
-        - name: criteria
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/Criteria'
+          - name: page
+            in: path
+            description: number of page
+            required: false
+            schema:
+              type: integer
+          - name: size
+            in: path
+            description: size of page
+            required: false
+            schema:
+              type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchProductRequestDto'
       responses:
         '200':
           description: Get list of products
@@ -145,79 +219,78 @@ paths:
     get:
       tags:
         - customer-service
-      summary: Get all products of basket by userId
-      description: Get all products of basket by userId
+      summary: Get all items of basket by userId
+      description: Get all items of basket by userId
       parameters:
         - name: userId
           in: path
           description: ID of user
           required: true
           schema:
-            type: integer
+            type: long
       responses:
         '200':
           description: Get list of products of basket
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ProductEntity'
+                $ref: '#/components/schemas/BasketItemsDto'
         '400':
           description: Invalid ID
         '404':
-          description: The user not found
-  /basket/{userId}/{goodsId}:
+          description: The user is not found
     post:
       tags:
         - customer-service
-      summary: Add product to basket
-      description: Add product to basket
+      summary: Add item to basket
+      description: Add item to basket
       parameters:
-        - name: goodsId
-          in: path
-          description: ID of goods
-          required: true
-          schema:
-            type: integer
         - name: userId
           in: path
           description: ID of user
           required: true
           schema:
-            type: integer
+            type: long
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddItemDto'
       responses:
         '200':
-          description: The product is added to basket
+          description: The item is added to basket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemDto'
         '400':
           description: Invalid ID
         '404':
-          description: The product not found
+          description: The product or user not found
+  /basket/{itemId}:
     delete:
       tags:
         - customer-service
-      summary: Delete product from basket
-      description: Delete product from basket
+      summary: Delete item from basket
+      description: Delete item from basket
       parameters:
-        - name: goodsId
+        - name: itemId
           in: path
-          description: ID of goods
+          description: ID of item of basket
           required: true
           schema:
-            type: integer
-        - name: userId
-          in: path
-          description: ID of user
-          required: true
-          schema:
-            type: integer
+            type: long
       responses:
         '200':
-          description: Goods is deleted
+          description: Item is deleted from basket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
         '400':
           description: Invalid ID
         '404':
-          description: Goods not found
+          description: Item is not found
   /order/{userId}:
     post:
       tags:
@@ -230,14 +303,55 @@ paths:
           description: ID of user
           required: true
           schema:
-            type: integer
+            type: long
       responses:
         '200':
           description: Order is created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDto'
         '400':
           description: Invalid ID
         '404':
           description: User not found
+    get:
+      tags:
+        - customer-service
+      summary: Ger all orders for user
+      description: Ger all orders for user
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: long
+        - name: page
+          in: path
+          description: number of page
+          required: false
+          schema:
+            type: integer
+        - name: size
+          in: path
+          description: size of page
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Get all orders for user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                 $ref: '#/components/schemas/OrderDto'
+        '400':
+          description: Invalid ID
+        '404':
+          description: User is not found
 components:
   schemas:
     ProductEntity:
@@ -270,11 +384,102 @@ components:
       properties:
         name:
           type: string
-    Criteria:
+    CreateUserRequestDto:
       properties:
+        name:
+          type: string
+          required: true
+        middlename:
+          type: string
+          required: false
+        lastname:
+          type: string
+          required: true
+        birthday:
+          type: date
+        gender:
+          type: string
+          required: true
+        city:
+          type: string
+          required: false
+        phoneNumbder:
+          type: string
+          required: false
+        email:
+          type: string
+          required: false
+    UserEntity:
+      properties:
+        id:
+          type: long
+        name:
+          type: string
+        middlename:
+          type: string
+        lastname:
+          type: string
+        birthday:
+          type: date
+        gender:
+          type: string
+        city:
+          type: string
+        phoneNumbder:
+          type: string
+        email:
+          type: string
+    SearchProductRequestDto:
+      properties:
+        name:
+          type: string
         category:
           type: string
-        mindate:
+    BasketItemsDto:
+      properties:
+        basketId:
+           type: long
+        userId:
+           type:  long
+        items:
+           type: array
+           items:
+              $ref: '#/components/schemas/ItemDto'
+    ItemDto:
+      properties:
+        id:
+          type: long
+        productId:
+          type: long
+        amount:
+          type: integer
+    AddItemDto:
+      properties:
+        productId:
+          type: long
+        amount:
+          type: integer
+    OrderDto:
+      properties:
+        id:
+          type: long
+        date:
+          type: date
+        status:
           type: string
-        maxdate:
-          type: string
+        userId:
+          type: long
+        orderedProducts:
+          type: array
+          items:
+           $ref: '#/components/schemas/OrderedProductDto'
+    OrderedProductDto:
+      properties:
+          id:
+            type: long
+          productId:
+            type: long
+          amount:
+            type: integer
+          price:
+            type: number
