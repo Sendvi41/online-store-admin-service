@@ -2,7 +2,9 @@ package com.epam.druzhinin.services;
 
 import com.epam.druzhinin.config.RabbitMQConfig;
 import com.epam.druzhinin.dto.ProductDto;
+import com.epam.druzhinin.dto.ProductQueueDto;
 import com.epam.druzhinin.entity.ProductEntity;
+import com.epam.druzhinin.enums.QueueTitle;
 import com.epam.druzhinin.exception.NotFoundException;
 import com.epam.druzhinin.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +44,10 @@ public class ProductService {
         ProductEntity product = modelMapper.map(productDto, ProductEntity.class);
         ProductEntity savedProduct = productRepository.save(product);
         log.info("Product is saved [id={}]", savedProduct.getId());
-        rabbitTemplate.convertAndSend(
-                rabbitMQConfig.getExchange(),
-                rabbitMQConfig.getRoutingKey(),
-                savedProduct);
+        sendToQueue(new ProductQueueDto()
+                .setQueueTitle(QueueTitle.CREATE)
+                .setProductEntity(savedProduct)
+        );
         log.info("Product was send to exchange[exchange={}]", rabbitMQConfig.getExchange());
         return savedProduct;
     }
@@ -64,6 +66,10 @@ public class ProductService {
         ProductEntity entity = modelMapper.map(productDto, ProductEntity.class);
         entity.setId(id);
         ProductEntity updatedProduct = productRepository.save(entity);
+        sendToQueue(new ProductQueueDto()
+                .setQueueTitle(QueueTitle.UPDATE)
+                .setProductEntity(updatedProduct)
+        );
         log.info("Product is updated [id={}]", id);
         return updatedProduct;
     }
@@ -74,6 +80,17 @@ public class ProductService {
                 () -> new NotFoundException("Product is not found id=" + id)
         );
         productRepository.deleteById(id);
+        sendToQueue(new ProductQueueDto()
+                .setQueueTitle(QueueTitle.DELETE)
+                .setProductEntity(new ProductEntity().setId(id))
+        );
         log.info("Product is deleted [id={}]", id);
+    }
+
+    private void sendToQueue(ProductQueueDto productQueueDto) {
+        rabbitTemplate.convertAndSend(
+                rabbitMQConfig.getExchange(),
+                rabbitMQConfig.getRoutingKey(),
+                productQueueDto);
     }
 }
