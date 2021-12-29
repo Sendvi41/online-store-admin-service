@@ -28,7 +28,10 @@ public class ProductService {
     private final RabbitMQConfig rabbitMQConfig;
 
     @Autowired
-    public ProductService(ModelMapper modelMapper, ProductRepository productRepository, RabbitTemplate rabbitTemplate, RabbitMQConfig rabbitMQConfig) {
+    public ProductService(ModelMapper modelMapper,
+                          ProductRepository productRepository,
+                          RabbitTemplate rabbitTemplate,
+                          RabbitMQConfig rabbitMQConfig) {
         this.modelMapper = modelMapper;
         this.productRepository = productRepository;
         this.rabbitTemplate = rabbitTemplate;
