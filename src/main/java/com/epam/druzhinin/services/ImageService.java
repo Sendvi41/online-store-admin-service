@@ -36,7 +36,9 @@ public class ImageService {
 
     @PostConstruct
     public void init() {
-        amazonS3Client.createBucket(nameImageBucket);
+        if (amazonS3Client.doesBucketExistV2(nameImageBucket)) {
+            amazonS3Client.createBucket(nameImageBucket);
+        }
     }
 
     public MessageDto uploadProductImage(Long productId, MultipartFile image) {
