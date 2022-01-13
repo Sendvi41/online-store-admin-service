@@ -1,0 +1,134 @@
+{
+  "ipcMode": null,
+  "executionRoleArn": "arn:aws:iam::644747386257:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "dnsSearchDomains": null,
+      "environmentFiles": null,
+      "logConfiguration": null,
+      "entryPoint": null,
+      "portMappings": [
+        {
+          "hostPort": 0,
+          "protocol": "tcp",
+          "containerPort": 8080
+        }
+      ],
+      "command": null,
+      "linuxParameters": null,
+      "cpu": 0,
+      "environment": [],
+      "resourceRequirements": null,
+      "ulimits": null,
+      "dnsServers": null,
+      "mountPoints": [],
+      "workingDirectory": null,
+      "secrets": [
+        {
+          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/admin-db-url",
+          "name": "ADMIN_DB_URL"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/admin-user",
+          "name": "ADMIN_USER"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/admin-pass",
+          "name": "ADMIN_PASS"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/rabbitmq-host",
+          "name": "RABBITMQ_HOST"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/rabbitmq-port",
+          "name": "RABBITMQ_PORT"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/rabbitmq-user",
+          "name": "RABBITMQ_USER"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/rabbitmq-pass",
+          "name": "RABBITMQ_PASS"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/s3-aws-region",
+          "name": "S3_AWS_REGION"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/s3-aws-endpoint",
+          "name": "S3_AWS_ENDPOINT"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/s3-aws-name-bucket",
+          "name": "S3_AWS_NAME_BUCKET"
+        }
+      ],
+      "dockerSecurityOptions": null,
+      "memory": 256,
+      "memoryReservation": null,
+      "volumesFrom": [],
+      "stopTimeout": null,
+      "image": "644747386257.dkr.ecr.eu-central-1.amazonaws.com/admin-service",
+      "startTimeout": null,
+      "firelensConfiguration": null,
+      "dependsOn": null,
+      "disableNetworking": null,
+      "interactive": null,
+      "healthCheck": null,
+      "essential": true,
+      "links": null,
+      "hostname": null,
+      "extraHosts": null,
+      "pseudoTerminal": null,
+      "user": null,
+      "readonlyRootFilesystem": null,
+      "dockerLabels": null,
+      "systemControls": null,
+      "privileged": null,
+      "name": "admin-service"
+    }
+  ],
+  "placementConstraints": [],
+  "memory": null,
+  "taskRoleArn": null,
+  "compatibilities": [
+    "EXTERNAL",
+    "EC2"
+  ],
+  "taskDefinitionArn": "arn:aws:ecs:eu-central-1:644747386257:task-definition/admin-service:4",
+  "family": "admin-service",
+  "requiresAttributes": [
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.execution-role-ecr-pull"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.secrets.ssm.environment-variables"
+    }
+  ],
+  "pidMode": null,
+  "requiresCompatibilities": [
+    "EC2"
+  ],
+  "networkMode": null,
+  "runtimePlatform": null,
+  "cpu": null,
+  "revision": 4,
+  "status": "ACTIVE",
+  "inferenceAccelerators": null,
+  "proxyConfiguration": null,
+  "volumes": []
+}
