@@ -41,10 +41,6 @@
           "name": "RABBITMQ_HOST"
         },
         {
-          "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/rabbitmq-port",
-          "name": "RABBITMQ_PORT"
-        },
-        {
           "valueFrom": "arn:aws:ssm:eu-central-1:644747386257:parameter/rabbitmq-user",
           "name": "RABBITMQ_USER"
         },
