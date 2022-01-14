@@ -66,7 +66,7 @@ jobs:
         with:
           task-definition: task-definition-admin-service.json
           container-name: admin-service
-          image: ${{ steps.build-image.outputs.image }}
+          image: test
           
       - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
