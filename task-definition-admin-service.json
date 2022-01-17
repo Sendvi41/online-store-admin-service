@@ -70,7 +70,7 @@
         }
       ],
       "dockerSecurityOptions": null,
-      "memory": 256,
+      "memory": 200,
       "memoryReservation": null,
       "volumesFrom": [],
       "stopTimeout": null,
