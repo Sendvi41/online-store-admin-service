@@ -36,7 +36,7 @@ public class ImageService {
 
     @PostConstruct
     public void init() {
-        if (amazonS3Client.doesBucketExistV2(nameImageBucket)) {
+        if (!amazonS3Client.doesBucketExistV2(nameImageBucket)) {
             amazonS3Client.createBucket(nameImageBucket);
         }
     }
