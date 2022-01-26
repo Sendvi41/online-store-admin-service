@@ -70,7 +70,6 @@ jobs:
       - name: Deploy new version
         id: deploy
         run: | 
-         node -- version
          npm install -g aws-cdk
          cd cdk-infrastructure
          cdk deploy admin-stack --require-approval never --parameters adminImageTag=${{ steps.build-image.outputs.image }}
