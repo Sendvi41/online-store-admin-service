@@ -60,18 +60,18 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
+      - name: Checkout cdk to deploy
+        uses: actions/checkout@v2
         with:
-          task-definition: task-definition-admin-service.json
-          container-name: admin-service
-          image: ${{ steps.build-image.outputs.image }}
+          repository: Sendvi41/aws-infrastructure-online-store
+          token: ${{ secrets.PAT_TOKEN }}
+          path: cdk-infrastructure
           
-      - name: Deploy to Amazon ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ secrets.AWS_NAME_ADMIN_SERVICE  }}
-          cluster: ${{ secrets.AWS_ADMIN_CLUSTER_NAME }}
-          wait-for-service-stability: true
+      - name: Deploy new version
+        id: deploy
+        run: | 
+         node -- version
+         npm install -g aws-cdk
+         cd cdk-infrastructure
+         cdk deploy admin-stack --require-approval never --parameters adminImageTag=${{ steps.build-image.outputs.image }}
+      
