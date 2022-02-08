@@ -49,7 +49,7 @@ public class ProductService {
         log.info("Product is saved [id={}]", savedProduct.getId());
         sendToQueue(new ProductQueueDto()
                 .setQueueTitle(QueueTitle.CREATE)
-                .setProductEntity(savedProduct)
+                .setProductId(savedProduct.getId())
         );
         log.info("Product was send to exchange[exchange={}]", rabbitMQConfig.getExchange());
         return savedProduct;
@@ -71,7 +71,7 @@ public class ProductService {
         ProductEntity updatedProduct = productRepository.save(entity);
         sendToQueue(new ProductQueueDto()
                 .setQueueTitle(QueueTitle.UPDATE)
-                .setProductEntity(updatedProduct)
+                .setProductId(updatedProduct.getId())
         );
         log.info("Product is updated [id={}]", id);
         return updatedProduct;
@@ -85,7 +85,7 @@ public class ProductService {
         productRepository.deleteById(id);
         sendToQueue(new ProductQueueDto()
                 .setQueueTitle(QueueTitle.DELETE)
-                .setProductEntity(new ProductEntity().setId(id))
+                .setProductId(id)
         );
         log.info("Product is deleted [id={}]", id);
     }
